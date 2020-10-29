@@ -12,29 +12,27 @@ import numpy as np
 import cv2
 import rosbag 
 import datetime
+import argparse
 
-ROSBAG_READ = "/home/amod20-rh3-ex-record-JuntingChen.bag"
-ROSBAG_WRITE = "/home/amod20-rh3-ex-record-processed.bag"
-# ROSBAG_READ = "/home/chenjunting/Documents/duckie_data/amod20-rh3-ex-record-JuntingChen.bag"
-# ROSBAG_WRITE = "./amod20-rh3-ex-record-processed.bag"
-IMG_TOPIC = "/duckiechan/camera_node/image/compressed"
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--bag_read', type=str, default="/home/amod20-rh3-ex-record-JuntingChen.bag")
+    parser.add_argument('--bag_write', type=str, default="/home/amod20-rh3-ex-process-JuntingChen.bag")
+    parser.add_argument('--img_topic', type=str, default="/duckiechan/camera_node/image/compressed")
+    args = parser.parse_args()
+    return args
 
-if 'ROSBAG_NAME' in os.environ:
-    ROSBAG_READ = os.environ['ROSBAG_READ']
-if 'ROSBAG_WRITE' in os.environ:
-    ROSBAG_WRITE = os.environ['ROSBAG_WRITE']
-if 'IMG_TOPIC' in os.environ:
-    IMG_TOPIC = os.environ['IMG_TOPIC']
-
+args = parse_args()
 
 bridge = CvBridge()
 
-bag_read = rosbag.Bag(ROSBAG_READ)
-bag_write = rosbag.Bag(ROSBAG_WRITE, 'w')
+
+bag_read = rosbag.Bag(args.bag_read)
+bag_write = rosbag.Bag(args.bag_write, 'w')
 
 for topic, msg, t in bag_read.read_messages():
 
-    if topic == IMG_TOPIC:
+    if topic == args.img_topic:
         
         img_msg = msg
         cv2_img = bridge.compressed_imgmsg_to_cv2(img_msg, desired_encoding='passthrough')

@@ -3,14 +3,16 @@
 import rosbag
 import os 
 import numpy as np
+import argparse
 
-if 'ROSBAG_NAME' in os.environ:
-    ROSBAG_NAME = os.environ['ROSBAG_NAME']
-else:
-    # ROSBAG_NAME = "example_rosbag_H3.bag"
-    ROSBAG_NAME = "/home/example_rosbag_H3.bag"
-
-bag = rosbag.Bag(ROSBAG_NAME)
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--rosbag_path', type=str, default="/home/example_rosbag_H3.bag")
+    
+    args = parser.parse_args()
+    return args
+args = parse_args()
+bag = rosbag.Bag(args.rosbag_path)
 topics = []
 t_arr = []
 for topic, _, t in bag.read_messages():
